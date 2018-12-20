@@ -1,15 +1,40 @@
 const http = require("http");
 const fs = require("file-system");
 
-http.createServer(function(req,res) {
-  try {
-    let file = fs.readFileSync("." + req["url"] + ".txt", "utf8");
-    res.write(file);
-  } catch(err) {
+//read/write files
+//reads info from movieA.txt, saves it, and appends new text.
+//readFileSync and writeFileSync are synchronous counterparts of --
+// -- readFile and writeFile, which are asynchronous
+let movieA = fs.readFileSync("./movieA.txt", "utf8");
+fs.writeFileSync("./movieA.txt", movieA + "This is text for movie A\n","utf8");
+
+//rename a file
+//alternates between "movieB.txt" and "movieBee.txt".
+//That's what the error function is for.
+  fs.rename("./movieB.txt", "movieBee.txt",
+  function(err){
     if(err) {
-      res.write("404 file not found.");
+      fs.rename("./movieBee.txt", "movieB.txt",
+        function (e) {
+          if(e) {
+            console.log("error is " + err);
+          } else {
+            console.log("Done Bee->B");
+          }
+        }
+      );
+    } else {
+      console.log("Done B->Bee");
     }
   }
+);
 
-  res.end();
-}).listen(3000);
+
+//delete a file
+fs.unlink("./movieC.txt",
+  function(err) {
+    if(err) {
+      console.log("error is " + err);
+    }
+  }
+);
